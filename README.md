@@ -1,43 +1,49 @@
-# 代理测试台 Proxy Tester
+# Proxy Tester
 
-一个只用 Python 标准库写的代理检测工具，无需安装任何第三方依赖。
+A proxy checking tool written with the Python standard library only — no third-party dependencies to install.
 
-- **代理检测**：测试账密代理在 HTTP / HTTPS / SOCKS5 三种协议下能否认证、能否连通，并显示出口 IP 的国家、城市、运营商和时区。
-- **网站解锁**：经代理访问常用网站（AI 工具、社交媒体、搜索、支付、电商、流媒体等），判断能否正常打开、是否有地区限制、是否触发人机验证，失败时给出白话原因和建议。
-- **网页界面**：本机模式免登录；团队模式（`--server`）支持账号登录、共享自定义网站、每人一份测试记录。
-- **MCP 服务**：`proxy_mcp.py` 提供 `test_proxy` / `lookup_ip` / `test_unlock` 三个工具，可接入 Claude 等 AI 助手。
+- **Proxy check**: tests whether an authenticated proxy can log in and connect over HTTP, HTTPS and SOCKS5, and shows the exit IP's country, city, ISP and time zone.
+- **Site unlock test**: opens common websites through the proxy (AI tools, social media, search, payments, e-commerce, streaming, etc.) and reports whether each one loads, is region-restricted, or triggers a human-verification challenge, with a plain-language reason and suggestion when it fails.
+- **Web UI**: local mode needs no login; team mode (`--server`) adds user accounts, shared custom sites, and per-user test history.
+- **MCP server**: `proxy_mcp.py` exposes three tools — `test_proxy`, `lookup_ip` and `test_unlock` — for AI assistants such as Claude.
 
-## 运行
+> The web UI and result messages are currently in Chinese.
+
+## Usage
 
 ```bash
-python3 proxy_web.py                 # 本机模式，自动打开浏览器
-python3 proxy_test.py 主机:端口:用户名:密码   # 命令行测试
+python3 proxy_web.py                          # local mode, opens your browser
+python3 proxy_test.py host:port:user:password # command-line check
 ```
 
-代理格式：`主机:端口:用户名:密码`、`用户名:密码@主机:端口` 或 `http://用户名:密码@主机:端口`。
+Supported proxy formats: `host:port:user:password`, `user:password@host:port`, or `http://user:password@host:port`.
 
-### 可选环境变量
+### Optional environment variables
 
-| 变量 | 作用 |
+| Variable | Purpose |
 | --- | --- |
-| `PROXY_TEST_DEFAULT_PORT` / `PROXY_TEST_DEFAULT_USER` / `PROXY_TEST_DEFAULT_PASS` | 只填一个 IP 时使用的默认端口和账密 |
-| `IPINFO_TOKEN` | ipinfo.io token，提高 IP 归属地查询额度（不设也能用） |
-| `PROXY_TESTER_DATA` | 数据目录（默认 `./data`） |
-| `PROXY_TEST_NO_BYPASS=1` | 关闭「绕过本机 TUN 模式 VPN 直连代理」 |
+| `PROXY_TEST_DEFAULT_PORT` / `PROXY_TEST_DEFAULT_USER` / `PROXY_TEST_DEFAULT_PASS` | Default port and credentials used when only an IP is entered |
+| `IPINFO_TOKEN` | ipinfo.io token for a higher geolocation quota (works without it) |
+| `PROXY_TESTER_DATA` | Data directory (default `./data`) |
+| `PROXY_TEST_NO_BYPASS=1` | Disable connecting to the proxy directly around a local TUN-mode VPN |
 
-## 团队模式
+## Team mode
 
 ```bash
-python3 team.py adduser 管理员用户名 --admin
+python3 team.py adduser ADMIN_NAME --admin
 python3 proxy_web.py --server --host 127.0.0.1 --port 7799
 ```
 
-请放在 HTTPS 反向代理（Caddy / Nginx）后面使用。团队模式禁止测试内网地址。
+Run it behind an HTTPS reverse proxy (Caddy / Nginx). Team mode refuses to test private/internal network addresses.
 
-## 自定义网站清单
+## Custom site list
 
-在同目录放一个 `sites.json`（`{"sites": [...]}`，格式同 `unlock_check.py` 里的 `DEFAULT_SITES`）即可替换默认清单。
+Put a `sites.json` file (`{"sites": [...]}`, same format as `DEFAULT_SITES` in `unlock_check.py`) next to the scripts to replace the default list.
 
-## 说明
+## Disclaimer
 
-本工具只用于测试你自己拥有或已获授权使用的代理。检测结果基于各网站公开页面的响应，仅供参考。
+Only test proxies you own or are authorized to use. Results are based on how each website's public pages respond and are for reference only.
+
+## License
+
+MIT
